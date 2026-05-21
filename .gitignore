@@ -8,6 +8,16 @@
 /projectSettingsUpdater.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+# Rider
+.idea/
+SocialNetwork/bin
+SocialNetwork/obj
+
+# Logs
+*.log
+
+# ASP.NET
+wwwroot/lib/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml

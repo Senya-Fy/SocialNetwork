@@ -40,8 +40,15 @@ public class FriendController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Friend friend)
     {
-        friend.CreatedAt = DateTime.Now;
-        await _repository.AddAsync(friend);
+        friend.CreatedAt = DateTime.UtcNow;
+        var result = await _repository.AddAsync(friend);
+        Console.WriteLine($"AccountId={friend.AccountId}, FriendId={friend.FriendId}");
+        if (!result)
+            return Conflict(new
+                {
+                    message = "Unable to create friend"
+                });
+        
         return Ok(friend);
     }
     

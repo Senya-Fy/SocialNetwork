@@ -8,7 +8,7 @@ public interface IFriendRepository
     
     Task<Friend?> GetByIdAsync(int accountId, int friendId);
     
-    Task AddAsync(Friend friend);
+    Task<bool> AddAsync(Friend friend);
     Task UpdateAsync(Friend friend);
     Task DeleteAsync(int accountId, int friendId);
 }

@@ -13,12 +13,14 @@
 
 <h2>Список друзей</h2>
 <ul id="friendsList"></ul>
-
+<p id="error" style="color:red;"></p>
+<p id="success" style="color:green;"></p>
 <script>
     const API_URL = "http://localhost:5063/api/friend";
 
     async function addFriend() {
         try {
+            console.log("ADD CLICKED");
             const friendId = document.getElementById("FriendId").value;
             const accountId = document.getElementById("AccountId").value;
             const status = document.getElementById("Status").value;
@@ -41,9 +43,10 @@
 
             if (!res.ok) {
                 const errorText = await res.text();
+                alert(errorText.message);
                 throw new Error(`Ошибка: ${res.status} - ${errorText}`);
             }
-
+            document.getElementById("success").innerText = "Friend added successfully";
             await loadFriends();
         } catch (e) {
             console.error("addFriend error:", e);
@@ -65,7 +68,8 @@
 
             data.forEach(f => {
                 const li = document.createElement("li");
-                li.innerText = `User ${f.accountId} → ${f.friendId} (${f.status})`;
+                li.innerHTML = `User ${f.accountId} → ${f.friendId} (${f.status})
+                <button onclick="deleteFriend(${f.accountId}, ${f.friendId})"> Удалить </button>`;
                 list.appendChild(li);
             });
 
@@ -81,6 +85,25 @@
         console.log("DOM ready");
         loadFriends();
     });
+    
+    async function deleteFriend(accountId, friendId)
+    {
+        try {
+            var res = await fetch(`${API_URL}/${accountId}/${friendId}`,
+            {
+                method: "DELETE"    
+            });
+            
+            if (!res.ok) {
+                throw new Error("Ошибка удаления");
+            }
+            
+            await loadFriends();
+        }
+        catch (e) {
+            console.error("deleteFriend error:", e);
+        }
+    }
 </script>
 
 </body>

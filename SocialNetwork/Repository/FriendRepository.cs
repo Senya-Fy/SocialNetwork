@@ -24,10 +24,33 @@ public class FriendRepository : IFriendRepository
         return await _context.Friend.FindAsync(accountId, friendId);
     }
     
-    public async Task AddAsync(Friend friend)
+    public async Task<bool> AddAsync(Friend friend)
     {
-        await _context.Friend.AddAsync(friend);
-        await _context.SaveChangesAsync();
+        try
+        {
+            var accountExists = await _context.Account.AnyAsync(account => account.Id == friend.AccountId);
+            
+            var friendExists = await _context.Account.AnyAsync(account => account.Id == friend.FriendId);
+
+            if (!accountExists || !friendExists)
+                return false;
+            
+            var alreadyExists = await _context.Friend.AnyAsync(
+                f => f.AccountId == friend.AccountId &&
+                     f.FriendId == friend.FriendId);
+            if (alreadyExists)
+                return false;
+            
+            await _context.Friend.AddAsync(friend);
+            await _context.SaveChangesAsync();
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
     }
     
     public async Task UpdateAsync(Friend friend)
